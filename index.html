@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Lapse Clock</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col items-center justify-center p-4">
+
+    <div class="flex flex-col items-center justify-center p-8 bg-gray-800 rounded-lg shadow-xl max-w-lg w-full">
+        <h1 class="text-3xl md:text-4xl font-bold mb-6 text-orange-400 text-center">Important Moment</h1>
+
+        <!-- Static Image -->
+        <div class="mb-8 p-2 bg-gray-700 rounded-lg shadow-inner">
+            <img src="https://placehold.co/400x300/a78bfa/ffffff?text=Your+Image+Here"
+                 alt="Placeholder Image"
+                 class="rounded-md w-full h-auto max-w-sm md:max-w-md"
+                 onerror="this.onerror=null;this.src='https://placehold.co/400x300/d1d5db/4b5563?text=Image+Unavailable';"
+            >
+        </div>
+
+        <!-- Clock Display -->
+        <div class="text-center bg-gray-700 p-6 rounded-lg shadow-md w-full">
+            <p class="text-lg md:text-xl text-gray-300 mb-2" id="clock-status">Calculating time...</p>
+            <div id="clock-display" class="text-4xl md:text-5xl lg:text-6xl font-extrabold text-teal-400">
+                00 days 00:00:00
+            </div>
+            <p class="text-sm md:text-base text-gray-400 mt-2">
+                Reference: Sep 26, 2025, 6:30 PM UTC+8
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Set the target date: September 26, 2025, 6:30 PM UTC+8
+        // To get 6:30 PM UTC+8, we subtract 8 hours to find the UTC equivalent.
+        // 18:30 (UTC+8) - 8 hours = 10:30 UTC
+        const targetDate = new Date(Date.UTC(2025, 8, 26, 10, 30, 0)); // Month is 0-indexed (8 for September)
+        const clockDisplay = document.getElementById('clock-display');
+        const clockStatus = document.getElementById('clock-status');
+
+        function updateClock() {
+            const now = new Date();
+            const difference = now.getTime() - targetDate.getTime(); // Difference in milliseconds
+
+            let absDifference = Math.abs(difference); // Absolute difference
+
+            // Calculate days, hours, minutes, seconds from absolute difference
+            const days = Math.floor(absDifference / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((absDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((absDifference % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((absDifference % (1000 * 60)) / 1000);
+
+            // Format numbers to always have two digits
+            const pad = (num) => num < 10 ? '0' + num : num;
+
+            if (difference >= 0) {
+                // Current time is after or exactly on the target date
+                clockStatus.textContent = "Time elapsed since:";
+            } else {
+                // Current time is before the target date (a countdown)
+                clockStatus.textContent = "Time until:";
+            }
+
+            clockDisplay.textContent = `${pad(days)} days ${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+        }
+
+        // Update the clock every second
+        setInterval(updateClock, 1000);
+
+        // Initial call to display the clock immediately
+        updateClock();
+    </script>
+</body>
+</html>
